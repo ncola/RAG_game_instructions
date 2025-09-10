@@ -1,0 +1,5 @@
+PERSIST_DIR = "./chroma_db"
+DATA_DIR = "./data"
+MODEL_NAME = "gpt-4o-mini"
+EMBED_MODEL = "text-embedding-3-small"
+MANIFEST_FILE = "manifest.json"

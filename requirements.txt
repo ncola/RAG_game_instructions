@@ -1,0 +1,8 @@
+openai==1.106.1
+python-dotenv
+langchain==0.3.27
+langchain-community==0.3.29
+pymupdf==1.26.4
+langchain-openai==0.3.32
+chromadb==1.0.20
+streamlit==1.49.1
