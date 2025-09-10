@@ -26,15 +26,14 @@ class VectorStore():
         vs.delete(where={"doc_id": doc_id})
         vs.persist() 
     
-    def vector_retriever(self, k:int=5, mmr:bool=True, lambda_mult:float=0.5):
+    def vector_retriever(self, k:int=5, score_threshold:float=0.8):
         """
         Returns a vector retriever (Chroma). Method: MMR (Max Marginal Relevance) - provides more context variety
         """
         vs = self.ensure_loaded()
-        kwargs = {"k": k}
-        if mmr:
-            kwargs.update({"search_type": "mmr", "lambda_mult": lambda_mult})
-        return vs.as_retriever(search_kwargs=kwargs)
+        kwargs = {"k": k, "score_threshold": score_threshold}
+
+        return vs.as_retriever(search_type="mmr", search_kwargs=kwargs)
 
 
  
