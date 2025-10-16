@@ -35,7 +35,8 @@ def build_messages(system_prompt:str, history, question:str, context_block:str):
 
     user_msg = (
         f"PYTANIE:\n{question}\n\n"
-        f"KONTEKST (fragmenty instrukcji – odpowiadaj wyłącznie na jego podstawie):\n"
+        f"KONTEKST (fragmenty instrukcji gier – odpowiadaj wyłącznie na jego podstawie."
+        f"Zwroc uwage, czy na pewno mowa o tej samej grze planszowej):\n"
         f"{context_block}\n\n"
         "Jeśli brakuje informacji w kontekście, powiedz to wprost."
     )

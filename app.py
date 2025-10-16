@@ -3,6 +3,8 @@ import streamlit as st
 from rag.bot import Bot
 from models.models import BotConfig, LLMConfig
 
+import time
+
 from dotenv import load_dotenv
 import os
 
@@ -46,18 +48,26 @@ def main():
     if "history" not in st.session_state:
             st.session_state.history = []
 
-    user_input = st.chat_input("Zadaj pytanie")
-    if user_input:
+    # display chat messages from history on app rerun
+    for role, content in st.session_state.history:
+        with st.chat_message(role):
+            st.markdown(content)
 
-        answer, sources = bot.answer(user_input, history=st.session_state.history)
-
+    if user_input:= st.chat_input("Zadaj pytanie o grę planszową"):
+        #question
+        with st.chat_message("user"):
+            st.markdown(user_input)
         st.session_state.history.append(("user", user_input))
+        
+        #answer
+        with st.chat_message("assistant"):
+            placeholder = st.empty()
+            with st.spinner("Myślę nad odpowiedzią..."):
+                time.sleep(0.3)
+                answer, sources = bot.answer(user_input, history=st.session_state.history)
+            placeholder.markdown(f"{answer}\n\n{sources}")
+            
         st.session_state.history.append(("assistant", f"{answer}\n\n{sources}"))
-
-        for role, content in st.session_state.history:
-            with st.chat_message(role):
-                st.markdown(content)
-
 
 if __name__ == "__main__":
     main()
