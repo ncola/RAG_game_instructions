@@ -1,44 +1,62 @@
 # 🎲 Game Instructions RAG 🎲
-System RAG (Retrieval-Augmented Generation), który ma wgrane instrukcje gier planszowych w formacie PDF i potrafi odpowiadać na pytania dotyczące zasad.
-Bot wyszukuje fragmenty instrukcji, przekazuje je jako kontekst do modelu LLM i zwraca odpowiedź wraz z podaniem źródeł.
+A Retrieval-Augmented Generation (RAG) system preloaded with board game rulebooks in PDF format, capable of answering questions about gameplay rules.  
+The bot retrieves relevant rule fragments, passes them as context to an LLM, and returns an answer along with cited sources.
 
-## Stack technologiczny 
+## Tech stack 
 - Python 3.10+
-- LangChain – obsługa pipeline’u RAG
-- ChromaDB – wektorowa baza danych (embeddingi instrukcji)
-- PyMuPDF – parser PDF
-- OpenAI GPT – model językowy do generowania odpowiedzi
-- Streamlit – prosty UI chatu
-- python-dotenv – obsługa klucza API z .env
+- LangChain – RAG pipeline orchestration
+- ChromaDB – vector database for rulebook embeddings
+- PyMuPDF – PDF parsing 
+- OpenAI GPT – language model for generating responses
+- Streamlit – lightweight chat UI
+- python-dotenv – API key management via `.env`
 
-## Architektura 
-data/ – przechowuje instrukcje gier (PDF)
-index/ – moduł indeksowania: ładuje dokumenty, dzieli je na fragmenty, tworzy embeddingi i zapisuje je w bazie wektorowej (ChromaDB) lub ją aktualizuje
-rag/ – moduł RAG: pobiera fragmenty z bazy, buduje prompty i wysyła je do modelu LLM, zwraca odpowiedzi wraz ze źródłami
-models/ – konfiguracje bota i modelu (np. parametry retrievera, temperatury)
-config.py – ustawienia projektu i treści promptów systemowych
-app.py – aplikacja Streamlit z prostym interfejsem czatu
-chroma_db/ – trwała baza embeddingów
+## Architecture 
+**data/** – stores board game rulebooks (PDF)
 
-## Przykładowe pytania
-"Jak liczyć punkty w Carcassonne?”
-"O co chodzi w Dobble?”
+**index/** – indexing module: loads documents, splits them into chunks, creates embeddings, and saves/updates them in ChromaDB
 
-## Funkcje
-- Wczytuje instrukcje gier z plików PDF i buduje bazę wektorową (ChromaDB)
-- Wyszukuje odpowiednie fragmenty dokumentów i podaje je jako kontekst dla LLM
-- Odpowiada tylko na podstawie kontekstu
-- Wyświetla źródła (plik i strona)
-- Streamlit UI – prosty chat z botem
-- Obsługa API key z .env albo możliwość wpisania klucza ręcznie w aplikacji
+**rag/** – RAG module: retrieves relevant chunks, builds prompts, calls the LLM, and returns answers with sources
 
-## Najblizsze TODO 
-- czyszczenie tekstu przed chunkowaniem oraz lepsze metadane
-- streaming tokenów (odpowiedzi na żywo)
-- lepsze zarządzanie historią 
-- dockerfile do łatwego uruchamiania
+**models/** – bot and model configuration (e.g., retriever parameters, temperature)
 
-## Źródła 
-instrukcje pochodzą ze strony:
-https://am76.pl/instrukcje?srsltid=AfmBOoqPdCfI1B1s_IpLrwl5PPjqR_DJzzGkIMQBWdKWXg6-7R7CLBCG
+**config.py** – project settings and system prompt definitions
+
+**app.py** – Streamlit app providing a simple chat interface
+
+**chroma_db/** – persistent vector database for embeddings
+
+## Makefile commands
+
+To simplify running the project, a small **Makefile** is included. Usage:
+
+```bash
+make install   # install dependencies
+make app       # run the Streamlit chatbot on http://localhost:8505 and have fun! 
+```
+
+## 💬 Example questions
+- “How do you score roads in Carcassonne?”  
+- “What’s the objective in Dobble?”
+
+## Features
+- Loads game rulebooks from PDF files and builds a ChromaDB vector store  
+- Retrieves relevant fragments and provides them as context to the LLM  
+- Answers **strictly based on context** (no hallucinations)  
+- Displays **sources** (file and page) for each answer  
+- Streamlit-based **chat UI**  
+- Supports **API key** from `.env` or manual entry within the app
+
+## Next steps 
+- Text cleaning before chunking and improved metadata  
+- Token streaming (live answer generation)  
+- Better conversation history management ✅  
+- Add Dockerfile for easy deployment
+
+## Sources 
+Rulebooks sourced from:
+[https://am76.pl/instrukcje](https://am76.pl/instrukcje)
+
+
+
 
