@@ -69,7 +69,7 @@ class VectorDBManager():
 
             #update the manifts file
             self.manifest[pdf] = new_hash
-            print(f"Zaktualizowano: {os.path.basename(pdf)} ({len(chunks)} chunków)")
+            print(f"Updated: {os.path.basename(pdf)} ({len(chunks)} chunks)")
 
         
         # delete pdfs that are no longer in data folder

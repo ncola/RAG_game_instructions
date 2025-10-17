@@ -1,7 +1,7 @@
 PERSIST_DIR = "./chroma_db"
 DATA_DIR = "./data"
 MODEL_NAME = "gpt-4o-mini"
-EMBED_MODEL = "text-embedding-3-small"
+EMBED_MODEL = "text-embedding-3-large"
 MANIFEST_FILE = "manifest.json"
 PURPOSE = """Jesteś asystentem opartym na RAG (Retrieval-Augmented Generation), 
             który odpowiada na pytania dotyczące zasad gier planszowych. Twoim 

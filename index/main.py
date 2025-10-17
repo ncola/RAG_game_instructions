@@ -1,25 +1,36 @@
 from index.corpus import Corpus
 from index.vectostore import VectorStore
 from index.vector_db_manager import VectorDBManager
+import argparse 
 
 from dotenv import load_dotenv
 load_dotenv()
 import openai, os
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-def ingest_incremental():
+def ingest_incremental(rebase: bool=False):
     corpus = Corpus()
     store = VectorStore()
     indexer = VectorDBManager(corpus, store)
+    if rebase:
+        store.clean_vs()
     indexer.upsert_folder()
 
+
 if __name__ == "__main__":
-    ingest_incremental()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--rebase",
+        action="store_true",
+        help="Delete the existing collection and build it from scratch.")
+    
+    args = parser.parse_args()
+
+    ingest_incremental(args.rebase)
 
     store = VectorStore(persist_dir="./chroma_db")
     vs = store.load()
-
-    print("Ilość dokumentów w bazie:", vs._collection.count())  
+    print("Number of documents (chunks from pdfs) in the vector store:", len(vs.get()))  
     
 
 

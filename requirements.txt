@@ -6,3 +6,5 @@ pymupdf==1.26.4
 langchain-openai==0.3.32
 chromadb==1.0.20
 streamlit==1.49.1
+argparse
+datetime
