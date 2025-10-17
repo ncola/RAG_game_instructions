@@ -31,12 +31,17 @@ class VectorDBManager():
             ids.append(f"{doc_hash}:{page}:{i}")
         return ids
     
-    def upsert_folder(self)->None:
+    def upsert_folder(self, rebase: bool)->None:
         """Main flow: add/update new/changed and delete disappeared files from vectorstore.
         Checking the contents of the entire data folder each time"""
         self.vectorstore.ensure_loaded()
-        pdfs = self.corpus.get_pdfs_paths()
+        pdfs:list[str] = self.corpus.get_pdfs_paths()
+        
         seen = {}
+
+        if rebase:
+            self.manifest.clear()
+            self._save_manifest()
 
         # for each PDF check the hash and do an upsert only if changed/new
         for pdf in pdfs:
@@ -46,18 +51,26 @@ class VectorDBManager():
             old_hash = self.manifest.get(pdf)
             if old_hash is not None:
                 if old_hash == new_hash: #if hash is the same = no chages in file
-                    print(f"Bez zmian: {pdf}")
+                    print(f"Without changes: {pdf}")
                     continue
                 else: #if hash is not the same delete old chunks of that document
-                    self.store.delete_by_doc_id(old_hash)
-                    print(f"Usunięto starą wersję: {os.path.basename(pdf)}")
-        
+                    self.vectorstore.delete_by_doc_id(old_hash)
+                    print(f"Old version removed: {os.path.basename(pdf)}")
+            #load pages from pdfs
             pages:list = self.corpus.load_pages(pdf)
+            #clean text
+            for page in pages:
+                page = self.corpus.clean_text(pdf)
 
+            game_name, game_family = self.corpus.get_game_name(pdf)
+            # insert document id to document metadata
             for page in pages:
                 page.metadata['doc_id'] = new_hash
+                page.metadata['game_name'] = game_name
+                page.metadata['game_family'] = game_family
 
-            chunks:list = self.corpus.chunk_pages(pages, chunk_size = 500,chunk_overlap = 60)
+            # create chunks
+            chunks:list = self.corpus.chunk_pages(pages, chunk_size = 1000, chunk_overlap = 100)
 
             #create and ids for every chunk 
             ids = []
@@ -67,9 +80,9 @@ class VectorDBManager():
             
             self.vectorstore.add_chunks(chunks, ids)
 
-            #update the manifts file
+            #update the manifest file
             self.manifest[pdf] = new_hash
-            print(f"Updated: {os.path.basename(pdf)} ({len(chunks)} chunks)")
+            print(f"Created/updated: {os.path.basename(pdf)} ({len(chunks)} chunks)")
 
         
         # delete pdfs that are no longer in data folder
@@ -78,19 +91,7 @@ class VectorDBManager():
                 old_hash = self.manifest[pdf]
                 self.vectorstore.delete_by_doc_id(old_hash)
                 del self.manifest[pdf]
-                print(f"Usunięto wpisy po znikniętym pliku: {os.path.basename(pdf)}")
+                print(f"Deleted entries after the file disappeared: {os.path.basename(pdf)}")
 
         self._save_manifest()
         print("✅ Vector database creation/update completed")
-
-
-
-
-
-
-
-
-
-
-
-

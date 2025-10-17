@@ -28,12 +28,10 @@ class VectorStore():
     def add_chunks(self, chunks:list[Document], ids:list[str])->None:
         vs = self.ensure_loaded()
         vs.add_documents(documents=chunks, ids=ids)
-        vs.persist() #permanent record PERSIST_DIR
 
     def delete_by_doc_id(self, doc_id:str)->None:
         vs = self.ensure_loaded()
         vs.delete(where={"doc_id": doc_id})
-        vs.persist() 
     
     def vector_retriever(self, k:int=5, score_threshold:float=0.8):
         """
@@ -48,6 +46,7 @@ class VectorStore():
         try:
             vs = self.ensure_loaded()
             vs.delete_collection()
+            print("Deleted old vector store.")
         except NotFoundError:
             print("Collection not found. Skipping deletion.")
         except Exception as e:

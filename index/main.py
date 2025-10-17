@@ -14,7 +14,7 @@ def ingest_incremental(rebase: bool=False):
     indexer = VectorDBManager(corpus, store)
     if rebase:
         store.clean_vs()
-    indexer.upsert_folder()
+    indexer.upsert_folder(rebase)
 
 
 if __name__ == "__main__":
@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     store = VectorStore(persist_dir="./chroma_db")
     vs = store.load()
-    print("Number of documents (chunks from pdfs) in the vector store:", len(vs.get()))  
+    print("Number of documents (chunks) in the vector store:", vs._collection.count())  
     
 
 
